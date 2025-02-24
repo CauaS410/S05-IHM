@@ -31,34 +31,36 @@ function reservarArmario() {
   // Selecionar aleatoriamente um armário disponível
   let armarioSorteado = armariosDisponiveis[Math.floor(Math.random() * armariosDisponiveis.length)];
   
-  // Atualizar status do armário para reservado
-  armarioSorteado.status = false;
+  // Encontrar o índice do armário no array original
+  let indiceArmario = armarios.findIndex(a => a.id === armarioSorteado.id);
+  
+  // Se encontrar o armário no array, fazer a atualização
+  if (indiceArmario !== -1) {
+      armarios[indiceArmario].status = false;
+      
+      // Obter data e hora da reserva
+      let dataHoraReserva = new Date();
+      
+      // Calcular data e hora para entrega (24 horas depois)
+      let dataHoraEntrega = new Date(dataHoraReserva);
+      dataHoraEntrega.setHours(dataHoraEntrega.getHours() + 24);
+      
+      // Salvar datas no objeto do armário dentro do array original
+      armarios[indiceArmario].dataHoraReserva = dataHoraReserva;
+      armarios[indiceArmario].dataHoraEntrega = dataHoraEntrega;
+      
+      // Atualizar o objeto armarioSorteado para refletir as mudanças
+      armarioSorteado = armarios[indiceArmario];
+  }
 
-  // Atualizar a pendência do usuário
-  usuario.pendencia = true;
-  
-  // Obter data e hora da reserva
-  let dataHoraReserva = new Date();
-  
-  // Calcular data e hora para entrega (24 horas depois)
-  let dataHoraEntrega = new Date(dataHoraReserva);
-  dataHoraEntrega.setHours(dataHoraEntrega.getHours() + 24);
-  
-  // Salvar datas no objeto do armário
-  armarioSorteado.dataHoraReserva = dataHoraReserva;
-  armarioSorteado.dataHoraEntrega = dataHoraEntrega;
-  
-  // Formatar data e hora para exibição
   let opcoesFormato = { 
       day: '2-digit', month: '2-digit', year: 'numeric', 
       hour: '2-digit', minute: '2-digit', second: '2-digit' 
   };
-  let dataHoraFormatada = dataHoraEntrega.toLocaleString('pt-BR', opcoesFormato);
-  
-  // Exibir mensagem no HTML com a data de entrega
+  let dataHoraFormatada = armarioSorteado.dataHoraEntrega.toLocaleString('pt-BR', opcoesFormato);
+
   document.getElementById("resultado").innerText = 
       `Olá, ${usuario.nome}! O armário ${armarioSorteado.id} foi reservado com sucesso!\nEntrega das chaves até: ${dataHoraFormatada}`;
-
 
   console.log("Usuário atualizado:", usuario);
   console.log("Armário reservado:", armarioSorteado);
